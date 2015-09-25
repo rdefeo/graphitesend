@@ -6,7 +6,9 @@ import pickle
 import socket
 import struct
 import time
+
 from __init__ import __version__  # noqa
+
 _module_instance = None
 
 default_graphite_pickle_port = 2004
@@ -20,7 +22,6 @@ class GraphiteSendException(Exception):
 
 
 class GraphiteClient(object):
-
     """
     Graphite Client that will setup a TCP connection to graphite.
 
@@ -212,27 +213,40 @@ class GraphiteClient(object):
 
         # Capture missing socket.
         except socket.gaierror as error:
-            raise GraphiteSendException(
+            log.error(GraphiteSendException(
                 "Failed to send data to %s, with error: %s" %
-                (self.addr, error))
+                (self.addr, error)))
+            try:
+                self.connect()
+            except:
+                log.warning("Could not connect to graphite")
+
 
         # Capture socket closure before send.
         except socket.error as error:
-            raise GraphiteSendException(
+            log.error(GraphiteSendException(
                 "Socket closed before able to send data to %s, "
                 "with error: %s" %
                 (self.addr, error)
-            )
+            ))
+            try:
+                self.connect()
+            except:
+                log.warning("Could not connect to graphite")
 
         except Exception as error:
-            raise GraphiteSendException(
+            log.error(GraphiteSendException(
                 "Unknown error while trying to send data down socket to %s, "
                 "error: %s" %
                 (self.addr, error)
-            )
+            ))
+            try:
+                self.connect()
+            except:
+                log.warning("Could not connect to graphite")
 
         return "sent %d long message: %s" % \
-            (len(message), "".join(message[:75]))
+               (len(message), "".join(message[:75]))
 
     def _presend(self, message):
         """
@@ -282,7 +296,7 @@ class GraphiteClient(object):
         message = "%s%s%s %f %d\n" % (self.prefix, metric, self.suffix,
                                       value, timestamp)
 
-        message = self. _presend(message)
+        message = self._presend(message)
 
         if self.dryrun:
             return message
@@ -376,7 +390,6 @@ class GraphiteClient(object):
 
 
 class GraphitePickleClient(GraphiteClient):
-
     def __init__(self, *args, **kwargs):
         # If the user has not given a graphite_port, then use the default pick
         # port.
@@ -551,6 +564,7 @@ def cli():
 
     graphitesend_instance = init()
     graphitesend_instance.send(metric, value)
+
 
 if __name__ == '__main__':  # pragma: no cover
     cli()
