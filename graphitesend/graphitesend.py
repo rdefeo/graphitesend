@@ -7,8 +7,6 @@ import socket
 import struct
 import time
 
-from __init__ import __version__  # noqa
-
 _module_instance = None
 
 default_graphite_pickle_port = 2004
@@ -155,17 +153,18 @@ class GraphiteClient(object):
         try:
             self.socket.connect(self.addr)
         except socket.timeout:
-            raise GraphiteSendException(
+            log.error(GraphiteSendException(
                 "Took over %d second(s) to connect to %s" %
-                (timeout_in_seconds, self.addr))
+                (timeout_in_seconds, self.addr)))
+
         except socket.gaierror:
-            raise GraphiteSendException(
-                "No address associated with hostname %s:%s" % self.addr)
+            log.error(GraphiteSendException(
+                "No address associated with hostname %s:%s" % self.addr))
         except Exception as error:
-            raise GraphiteSendException(
+            log.error(GraphiteSendException(
                 "unknown exception while connecting to %s - %s" %
                 (self.addr, error)
-            )
+            ))
 
         return self.socket
 
