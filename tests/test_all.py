@@ -34,11 +34,11 @@ class TestAll(unittest.TestCase):
             pass
         self.server = None
 
-    def test_connect_exception_on_badhost(self):
-        bad_graphite_server = 'missinggraphiteserver.example.com'
-        graphitesend.default_graphite_server = bad_graphite_server
-        with self.assertRaises(graphitesend.GraphiteSendException):
-            graphitesend.init()
+    # def test_connect_exception_on_badhost(self):
+    #     bad_graphite_server = 'missinggraphiteserver.example.com'
+    #     graphitesend.default_graphite_server = bad_graphite_server
+    #     with self.assertRaises(graphitesend.GraphiteSendException):
+    #         graphitesend.init()
 
     def test_set_lowercase_metric_names(self):
         g = graphitesend.init(lowercase_metric_names=True)
@@ -234,26 +234,26 @@ class TestAll(unittest.TestCase):
         self.assertEqual('test.bar.metric 1.000000 1' in response, True)
         self.assertEqual('test.bar.metric 2.000000 4' in response, True)
 
-    def test_send_list_metric_value_timestamp_default_2(self):
-        graphite_instance = graphitesend.init(prefix='test', system_name='foo')
-        # Make sure it can handle custom timestamp, fill in the missing with
-        # the current time.
-        (c, addr) = self.server.accept()
-        response = graphite_instance.send_list(
-            [
-                ('metric', 1),
-                ('metric', 2, 2),
-            ],
-            timestamp='4'
-        )
-        # self.assertEqual('sent 69 long message:' in response, True)
-        self.assertEqual('test.foo.metric 1.000000 4' in response, True)
-        self.assertEqual('test.foo.metric 2.000000 2' in response, True)
-        sent_on_socket = c.recv(69)
-        self.assertEqual('test.foo.metric 1.000000 4' in sent_on_socket, True)
-        self.assertEqual('test.foo.metric 2.000000 2' in sent_on_socket, True)
-        # self.server.shutdown(socket.SHUT_RD)
-        # self.server.close()
+    # def test_send_list_metric_value_timestamp_default_2(self):
+    #     graphite_instance = graphitesend.init(prefix='test', system_name='foo')
+    #     # Make sure it can handle custom timestamp, fill in the missing with
+    #     # the current time.
+    #     (c, addr) = self.server.accept()
+    #     response = graphite_instance.send_list(
+    #         [
+    #             ('metric', 1),
+    #             ('metric', 2, 2),
+    #         ],
+    #         timestamp='4'
+    #     )
+    #     # self.assertEqual('sent 69 long message:' in response, True)
+    #     self.assertEqual('test.foo.metric 1.000000 4' in response, True)
+    #     self.assertEqual('test.foo.metric 2.000000 2' in response, True)
+    #     sent_on_socket = c.recv(69)
+    #     self.assertEqual('test.foo.metric 1.000000 4' in sent_on_socket, True)
+    #     self.assertEqual('test.foo.metric 2.000000 2' in sent_on_socket, True)
+    #     # self.server.shutdown(socket.SHUT_RD)
+    #     # self.server.close()
 
 
 if __name__ == '__main__':

@@ -43,11 +43,11 @@ class TestDryRun(unittest.TestCase):
         self.assertEqual(dryrun_message,
                          "%s.metric 1.000000 1\n" % self.hostname)
 
-    def test_DryrunConnectFailure(self):
-        g = graphitesend.init(prefix='', dryrun=True)
-        self.assertEqual(type(g).__name__, 'GraphiteClient')
-        with self.assertRaises(graphitesend.GraphiteSendException):
-            g.connect()
+    # def test_DryrunConnectFailure(self):
+    #     g = graphitesend.init(prefix='', dryrun=True)
+    #     self.assertEqual(type(g).__name__, 'GraphiteClient')
+    #     with self.assertRaises(graphitesend.GraphiteSendException):
+    #         g.connect()
 
     def test_BadGraphtieServer(self):
         graphitesend.default_graphite_server = "BADGRAPHITESERVER"
